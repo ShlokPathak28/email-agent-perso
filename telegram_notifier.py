@@ -1,5 +1,7 @@
 """Telegram notification sender for email digests."""
+import html
 import logging
+import re
 from typing import Optional
 
 import requests
@@ -92,40 +94,54 @@ def send_simple_message(text: str, bot_token: Optional[str] = None, chat_id: Opt
 
 def _markdown_to_telegram_html(text: str) -> str:
     """Convert simple markdown to Telegram HTML subset."""
-    import re
 
-    # Headers
-    text = re.sub(r"^#\s+(.+)$", r"<b>\1</b>", text, flags=re.MULTILINE)
-    text = re.sub(r"^###\s+(.+)$", r"<b>\1</b>", text, flags=re.MULTILINE)
+    # 1. Headers
+    text = re.sub(r"^#{1,6}\s+(.+)$", r"<b>\1</b>", text, flags=re.MULTILINE)
     text = re.sub(r"^---+$", "", text, flags=re.MULTILINE)
 
-    # Bold
+    # 2. Bold **text**
     text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
-    text = re.sub(r"__(.+?)__", r"<b>\1</b>", text)
 
-    # Italic
-    text = re.sub(r"\*(.+?)\*", r"<i>\1</i>", text)
-    text = re.sub(r"_(.+?)_", r"<i>\1</i>", text)
+    # 3. Italic *text* (but not bullets)
+    text = re.sub(r"(?<!\n)\*(.+?)\*(?!\s)", r"<i>\1</i>", text)
 
-    # Code / inline
+    # 4. Code `text`
     text = re.sub(r"`(.+?)`", r"<code>\1</code>", text)
 
-    # Bullet points
+    # 5. Bullet points
     text = re.sub(r"^\*\s+", "• ", text, flags=re.MULTILINE)
     text = re.sub(r"^-\s+", "• ", text, flags=re.MULTILINE)
 
-    # Clean up excessive whitespace
+    # 6. Clean excessive whitespace
     text = re.sub(r"\n{4,}", "\n\n\n", text)
 
-    # Escape HTML entities that aren't tags
-    # Simple approach: we already used <b>, <i>, <code> — avoid double-escaping
-    text = text.replace("&", "&amp;")
-    text = text.replace("<b>", "<<B>>").replace("</b>", "<</B>>")
-    text = text.replace("<i>", "<<I>>").replace("</i>", "<</I>>")
-    text = text.replace("<code>", "<<CODE>>").replace("</code>", "<</CODE>>")
-    text = text.replace("<", "&lt;").replace(">", "&gt;")
-    text = text.replace("<<B>>", "<b>").replace("<</B>>", "</b>")
-    text = text.replace("<<I>>", "<i>").replace("<</I>>", "</i>")
-    text = text.replace("<<CODE>>", "<code>").replace("<</CODE>>", "</code>")
+    # 7. Escape raw HTML characters that aren't our Telegram tags
+    text = _escape_html_except_tags(text, {"b", "i", "code"})
 
     return text.strip()
+
+
+def _escape_html_except_tags(text: str, allowed_tags: set) -> str:
+    """Escape <, >, & but preserve allowed HTML tags."""
+    # Find all allowed tags and replace with unique placeholders
+    tag_pattern = re.compile(r"<(/?)(b|i|code)(/?)>")
+
+    placeholders = {}
+    counter = [0]
+
+    def replace_tag(match):
+        counter[0] += 1
+        ph = f"\x00{counter[0]}\x00"
+        placeholders[ph] = match.group(0)
+        return ph
+
+    text = tag_pattern.sub(replace_tag, text)
+
+    # Now escape all remaining HTML characters
+    text = html.escape(text)
+
+    # Restore allowed tags
+    for ph, tag in placeholders.items():
+        text = text.replace(ph, tag)
+
+    return text
