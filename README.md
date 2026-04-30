@@ -118,6 +118,26 @@ config.py        → Settings & env vars
 
 ---
 
+## Telegram Notifications
+
+Get digests sent directly to your phone:
+
+1. Message [@BotFather](https://t.me/botfather) on Telegram → `/newbot` → save the token
+2. Message [@userinfobot](https://t.me/userinfobot) → save your Chat ID
+3. Add to `.env`:
+   ```
+   TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234...
+   TELEGRAM_CHAT_ID=123456789
+   ```
+4. Run normally — summaries now go to both terminal AND Telegram:
+   ```bash
+   python agent.py --once
+   ```
+
+Long digests are automatically split into multiple messages.
+
+---
+
 ## Extending
 
 - **Add LLM summaries**: Set `SUMMARIZER_MODEL=openai` and provide `OPENAI_API_KEY`

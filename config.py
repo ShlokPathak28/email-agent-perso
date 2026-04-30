@@ -61,5 +61,9 @@ SCHEDULE_INTERVAL_MINUTES = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", "15"))
 SUMMARIZER_MODEL = os.getenv("SUMMARIZER_MODEL", "local")  # "openai", "local", or "none"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+# ─── Telegram Notifications ────────────────────────────────────────────────────
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
 # ─── Logging ────────────────────────────────────────────────────────────────────
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")

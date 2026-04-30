@@ -19,6 +19,7 @@ from config import (
 from formatter import format_digest, format_digest_aggregated
 from models import ClassifiedEmail, Digest
 from providers import get_provider
+from telegram_notifier import send_digest
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),
@@ -77,7 +78,9 @@ class EmailAgent:
 
         if aggregate:
             summaries = aggregate_threads(classified)
-            output = format_digest_aggregated(summaries, datetime.now(timezone.utc))
+            output = format_digest_aggregated(summaries, datetime.now(timezone.utc), use_rich=False)
+            # Print to terminal (with rich formatting)
+            format_digest_aggregated(summaries, datetime.now(timezone.utc), use_rich=True)
         else:
             digest = Digest(
                 generated_at=datetime.now(timezone.utc),
@@ -86,7 +89,12 @@ class EmailAgent:
                 informational=[c for c in classified if c.priority.value == "informational"],
                 ignored=[c for c in classified if c.priority.value == "ignore"],
             )
-            output = format_digest(digest)
+            output = format_digest(digest, use_rich=False)
+            # Print to terminal (with rich formatting)
+            format_digest(digest, use_rich=True)
+
+        # Send to Telegram if configured
+        send_digest(output)
 
         return output
 
