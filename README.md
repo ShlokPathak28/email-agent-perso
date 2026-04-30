@@ -1,3 +1,9 @@
+> **NOTE:** I was bored and didn't want to read all my emails on my own — I don't open Gmail that often. So I made this using **Kimi K2.6**. 
+> 
+> **MADE WITH AI**
+
+---
+
 # 📬 Email Summarization Agent
 
 An AI agent that reads, processes, and summarizes emails with structured output, priority detection, and Telegram delivery.
