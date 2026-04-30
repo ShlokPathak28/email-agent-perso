@@ -1,0 +1,13 @@
+google-auth>=2.22.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.1
+google-api-python-client>=2.95.0
+MSAL>=1.23.0
+requests>=2.31.0
+python-dateutil>=2.8.2
+beautifulsoup4>=4.12.2
+lxml>=4.9.3
+python-dotenv>=1.0.0
+schedule>=1.2.0
+tenacity>=8.2.2
+rich>=13.5.2
