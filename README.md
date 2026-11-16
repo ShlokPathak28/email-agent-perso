@@ -1,12 +1,8 @@
-> **NOTE:** I was bored and didn't want to read all my emails on my own — I don't open Gmail that often. So I made this using **Kimi K2.6**. 
-> 
-> **MADE WITH AI**
-
----
-
 # 📬 Email Summarization Agent
 
 An AI agent that reads, processes, and summarizes emails with structured output, priority detection, and Telegram delivery.
+
+> **Why I built it:** Manually triaging an inbox I rarely opened was slow and repetitive — exactly the kind of problem worth automating. Instead of checking Gmail by hand, I built an agent that does the reading, classifying, and summarizing for me.
 
 ---
 
@@ -183,7 +179,7 @@ nohup python agent.py > agent.log 2>&1 &
 • Marketing – Ignored domain: marketing.example.com
 ```
 
-**Telephone:** Same clean summary delivered to your phone.
+**Telegram:** Same clean summary delivered to your phone.
 
 ---
 
@@ -221,3 +217,7 @@ config.py             → Settings
 - **Read-only** — never sends, deletes, or modifies emails
 - All tokens stored **locally** (never uploaded)
 - No email content logged by default
+
+---
+
+*Built iteratively with AI coding assistants (Kimi K2.6), designed, tested and maintained by me.*
